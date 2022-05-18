@@ -1,5 +1,4 @@
 import gc
-
 from dash import Dash, html, dcc,Input, Output, callback #dash == 2.3.1
 import dash_bootstrap_components as dbc # dash_bootstrap_components==1.1.0
 import dash
@@ -19,15 +18,15 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP],
                 meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, initial-scale=1.0'}]
                 )
-server = app.server
+#server = app.server
 
 # Define layouts. Import LSTM model. Define functions to fetch, clean and process movie reviews data, which feed into model for sentiment analysis.
 # Load the IMDB review classification model
-#model=tf.keras.models.load_model("sentiment-model")
+model=tf.keras.models.load_model("sentiment-model")
 
 # Define functions
 # Define function to fetch review by movie name
-'''
+
 ia = IMDb()
 def get_review(movie_name):
     movies=ia.search_movie(movie_name)
@@ -50,18 +49,18 @@ def get_person_movies(person_name):
     movies=[*char['titlesRefs']]
 
     return movies
-'''
+
 # Define function to analyze review sentiment (rating)
 def get_movie_rating(movie_review):
-    model=tf.keras.models.load_model("sentiment-model")
+    #model=tf.keras.models.load_model("sentiment-model")
     prediction=model.predict(movie_review)
-    del model
-    gc.collect()
+    #del model
+    #gc.collect()
     prediction=[list(x)[0] for x in prediction]
     review_rating_dict=dict(zip(movie_review,prediction))
 
     return mean(prediction), review_rating_dict
-'''
+
 # Define function to get sentiment of all movies sentiment by an actor.
 def get_rating_person(person_name):
     movie_list=get_person_movies(person_name)
@@ -72,7 +71,7 @@ def get_rating_person(person_name):
             i=get_movie_rating(reviews)
             movie_rating[movie]=i
     return movie_rating
-'''
+
 
 # 1. layout1_text
 # style and text in this layout
@@ -118,7 +117,7 @@ layout1_text=dbc.Col([
 ],xs=12, sm=12, md=12, lg=6, xl=6,style={'border':'1px solid black','padding-top':'0.5rem'}
 )
 
-'''
+
 # 2. layout2_movie_name
 
 # Style in this layout
@@ -141,8 +140,7 @@ layout2_movie_name=dbc.Col([
     html.Div(id='movie_review'),
 ],xs=12, sm=12, md=12, lg=6, xl=6,style={'border':'1px solid black','padding-top':'0.5rem'}
 )
-'''
-'''
+
 # 3. layout3_movie_actor
 # style in this layout
 style_input3={'width':'25rem','height':'2rem','border':'1px solid','color':'lightblue',
@@ -165,7 +163,7 @@ layout3_movie_actor=dbc.Col([
     html.Div(id='review-classification'),
 ],xs=12, sm=12, md=12, lg=6, xl=6,style={'border':'1px solid black','padding-top':'0.5rem'}
 )
-'''
+
 
 # 4. layout3_rank_actors
 # import processed ranking from excel file and plot the figure
@@ -205,10 +203,10 @@ app.layout = html.Div([
 
     dbc.Row([
         layout1_text,
-        #layout2_movie_name,
+        layout2_movie_name,
         ]),
     dbc.Row([
-        #layout3_movie_actor,
+        layout3_movie_actor,
         layout4_rank_actors,
     ]),
     
@@ -230,9 +228,10 @@ def update_graph(input1): # Plot candlestick price
     #df['review']=df.index
     df.reset_index(drop=True,inplace=True)
     df['Class']=df['Positive Probability (Sentiment 0 to 1)'].map(lambda x:'positive' if x> 0.5 else 'negative')
+    print('test')
     return dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True,color="info")
 
-'''
+
 # layout2. Callback function to return movie review sentiment.
 
 @callback(
@@ -241,8 +240,7 @@ def update_graph(input1): # Plot candlestick price
     Input('movie_name2', 'value'),
 )
 
-
-def update_graph(input1): # Plot candlestick price
+def update_graph2(input1): # Plot candlestick price
     #print('test1')
     rating,rating_dict=get_movie_rating(get_review(input1))
     rating=round(rating,5)
@@ -252,8 +250,7 @@ def update_graph(input1): # Plot candlestick price
     df.reset_index(drop=True,inplace=True)
     df['Class']=df['Positive Probability (Sentiment 0 to 1)'].map(lambda x:'positive' if x> 0.5 else 'negative')
     return dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True,color="info"), [html.H5("Average rating:", style={'color': 'red','text-align':'center'}),html.H5(rating, style={'color': 'red'})]
-'''
-'''
+
 # lay3.  Callback function to get sentiment of movies by an actor based on the reviews.
 
 @callback(
@@ -261,17 +258,18 @@ def update_graph(input1): # Plot candlestick price
     Input('actor_name', 'value'),
 )
 
-def update_graph(input1): # Plot candlestick price
+def update_graph3(input1): # Plot candlestick price
     movie_rating_dict=get_rating_person(input1)
     df=pd.DataFrame.from_dict(movie_rating_dict, orient='index',columns=['Rating'])
     df['Movies']=df.index
     df.reset_index(drop=True,inplace=True)
     return dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True,color="info")
 
-'''
-'''
+
+
 if __name__ == "__main__":
-    server.run(debug=True, port=8080)
-'''
+    server_port = os.environ.get('PORT', '8080')
+    app.run(debug=False, port=server_port, host='0.0.0.0')
+
 
     #app.run_server(debug=True, port=8080)
