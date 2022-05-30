@@ -167,7 +167,7 @@ layout3_movie_actor=dbc.Col([
 
 # 4. layout3_rank_actors
 # import processed ranking from excel file and plot the figure
-excel=pd.read_excel("new.xlsx")
+excel=pd.read_excel("star_ranking.xlsx")
 excel.dropna(axis=1,inplace=True)
 excel1=excel[['Name','Rating']].sort_values('Rating')
 excel1.reset_index(inplace=True)
