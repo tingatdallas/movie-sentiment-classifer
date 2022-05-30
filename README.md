@@ -10,6 +10,8 @@ LSTM based model to classify sentiment of movie reviews (IMDB).
 
 4. Finally, the code was dockerized and deployed to Google Cloud Run.
 
-5. Contact me if have any question: sutingatchicago@gmail.com
+5. The web app is easily adapted to other sentiment analysis such as reviews in twitter, products reviews in E-commence, etc.
+
+6. Contact me if have any question: sutingatchicago@gmail.com
 
 
