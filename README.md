@@ -8,7 +8,7 @@ LSTM based model to classify sentiment of movie reviews (IMDB).
 
 3. The movie reviews are fetched from IMDB website through IMDBPY API. The dashboard layout was built with Dash / Plotly.
 
-4. Finally, the code was dockerized and deployed to Google Cloud Run.
+4. Finally, the code was dockerized and deployed to Google Cloud Run (https://sutingatchicago-mypbgqf64a-uc.a.run.app/).
 
 5. The web app is easily adapted to other sentiment analysis such as reviews in twitter, products reviews in E-commence, etc.
 
